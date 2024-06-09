@@ -9,7 +9,7 @@ load_dotenv()
 
 config = {
     "token": os.getenv("token"),
-    "path": os.getenv("path"),
+    "path": os.getenv("server_path"),
 }
 
 intents = discord.Intents.default()
