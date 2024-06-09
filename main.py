@@ -3,26 +3,34 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import subprocess
+import threading
 
 load_dotenv()
 
 config = {
-    "app_id": os.getenv("app_id"),
-    "public_key": os.getenv("public_key"),
-    "private_key": os.getenv("private_key"),
-    "token": os.getenv("token")
+    "token": os.getenv("token"),
+    "path": os.getenv("path"),
 }
 
 intents = discord.Intents.default()
 intents.message_content = True
 server_process = None
+output_thread = None
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+def read_output(process):
+    while True:
+        output = process.stdout.readline()
+        if output == '' and process.poll() is not None:
+            break
+        if output:
+            print(output.strip())
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    await bot.change_presence(activity=discord.Game(name="Server Offline"))
+    await bot.change_presence(activity=discord.Game(name="!bothelp"))
 
 @bot.command()
 async def ping(ctx):
@@ -31,30 +39,11 @@ async def ping(ctx):
 @bot.command()
 async def start(ctx):
     global server_process
-    await ctx.send("Starting the server..")
-    
-    try:
-        server_process = subprocess.Popen([r"C:\Users\hashi\Downloads\Server\start.bat"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-        await bot.change_presence(activity=discord.Game(name="Server Online"))
-        await ctx.send("Server started successfully!")
-    except Exception as e:
-        await ctx.send(f"Failed to start the server. Error: {e}")
-        await bot.change_presence(activity=discord.Game(name="Server Offline"))
+    global output_thread
 
-@bot.command()
-async def stop(ctx):
-    global server_process
-    if server_process is not None:
-        await ctx.send("Stopping the server..")
-        try:
-            server_process.stdin.write('stop\r')
-            server_process.stdin.flush()
-            server_process.wait(timeout=60)
-            server_process = None
-            await ctx.send("Server stopped successfully!")
-        except Exception as e:
-            await ctx.send(f"Failed to stop server. Error: {e}")
-    else:
-        await ctx.send("Server is not running.")
+    server_process = subprocess.Popen([config["path"]], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    output_thread = threading.Thread(target=read_output, args=(server_process,))
+    output_thread.start()
+    await ctx.send("Minecraft server started.")
 
 bot.run(config["token"])
