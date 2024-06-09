@@ -17,6 +17,11 @@ serv_proc = None
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+def send_input(text):
+    global serv_proc
+
+    serv_proc.communicate(input=text)
+
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
@@ -40,7 +45,7 @@ async def start(ctx):
     if serv_proc is None:
         await ctx.send("Minecraft server starting up...")
         try:
-            serv_proc = subprocess.Popen(config["start_server"], shell=True, stdin=subprocess.PIPE)
+            serv_proc = subprocess.Popen(config["start_server"], shell=True, text=True, stdin=subprocess.PIPE)
         
         except Exception as e:
             print(e)
@@ -55,9 +60,7 @@ async def stop(ctx):
     global serv_proc
     if serv_proc is not None:
         await ctx.send("Stopping Minecraft server...")
-        serv_proc.stdin.write(b"/stop\n")
-        serv_proc.stdin.flush()
-        serv_proc.stdin.close()
+        send_input("stop")
         serv_proc.wait()
         serv_proc = None
         await ctx.send("Server stopped!")
