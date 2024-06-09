@@ -3,47 +3,65 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import subprocess
-import threading
 
 load_dotenv()
 
 config = {
     "token": os.getenv("token"),
-    "path": os.getenv("server_path"),
+    "start_server": f"java -Xms4G -Xmx4G -XX:+UseG1GC -jar spigot.jar nogui"
 }
 
 intents = discord.Intents.default()
 intents.message_content = True
-server_process = None
-output_thread = None
+serv_proc = None
 
 bot = commands.Bot(command_prefix="!", intents=intents)
-
-def read_output(process):
-    while True:
-        output = process.stdout.readline()
-        if output == '' and process.poll() is not None:
-            break
-        if output:
-            print(output.strip())
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    await bot.change_presence(activity=discord.Game(name="!bothelp"))
+
+    # Send message to channel
+    channel = bot.get_channel(1166414794639822918)
+    await channel.send("Awake!")
 
 @bot.command()
 async def ping(ctx):
     await ctx.send("Pong!")
 
 @bot.command()
-async def start(ctx):
-    global server_process
-    global output_thread
+async def status(ctx):
+    await ctx.send("Server is running!") if serv_proc is not None else await ctx.send("Server is not running, or server has been started manually!")
 
-    server_process = subprocess.Popen([config["path"]], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    output_thread = threading.Thread(target=read_output, args=(server_process,))
-    output_thread.start()
-    await ctx.send("Minecraft server started.")
+@bot.command()
+async def start(ctx):
+    global serv_proc
+
+    if serv_proc is None:
+        await ctx.send("Minecraft server starting up...")
+        try:
+            serv_proc = subprocess.Popen(config["start_server"], shell=True, stdin=subprocess.PIPE)
+        
+        except Exception as e:
+            print(e)
+            await ctx.send("Failed to start Minecraft server! Error: " + str(e))
+            serv_proc = None
+
+    else:
+        await ctx.send("Server is already running!")
+
+@bot.command()
+async def stop(ctx):
+    global serv_proc
+    if serv_proc is not None:
+        await ctx.send("Stopping Minecraft server...")
+        serv_proc.stdin.write(b"/stop\n")
+        serv_proc.stdin.flush()
+        serv_proc.stdin.close()
+        serv_proc.wait()
+        serv_proc = None
+        await ctx.send("Server stopped!")
+    else:
+        await ctx.send("Server is not running!")
 
 bot.run(config["token"])

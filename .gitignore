@@ -300,3 +300,5 @@ logs/2024-06-08-13.log.gz
 logs/2024-06-08-14.log.gz
 logs/2024-06-08-15.log.gz
 logs
+crash-reports
+spigot.jar
