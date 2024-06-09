@@ -2,7 +2,7 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-import subprocess
+from asyncio import subprocess
 
 load_dotenv()
 
@@ -16,6 +16,12 @@ intents.message_content = True
 serv_proc = None
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+async def send_input(text):
+    global serv_proc
+
+    serv_proc.stdin.write(f'{text}\n'.encode())
+    await serv_proc.stdin.drain()
 
 @bot.event
 async def on_ready():
@@ -40,7 +46,7 @@ async def start(ctx):
     if serv_proc is None:
         await ctx.send("Minecraft server starting up...")
         try:
-            serv_proc = subprocess.Popen(config["start_server"], shell=True, stdin=subprocess.PIPE)
+            serv_proc = await subprocess.create_subprocess_shell(config["start_server"], shell=True, stdin=subprocess.PIPE)
         
         except Exception as e:
             print(e)
@@ -55,11 +61,11 @@ async def stop(ctx):
     global serv_proc
     if serv_proc is not None:
         await ctx.send("Stopping Minecraft server...")
-        serv_proc.stdin.write(b"/stop\n")
-        serv_proc.stdin.flush()
-        serv_proc.stdin.close()
-        serv_proc.wait()
+        await send_input("stop")
+        await serv_proc.wait()
+        
         serv_proc = None
+        
         await ctx.send("Server stopped!")
     else:
         await ctx.send("Server is not running!")
