@@ -1,0 +1,13 @@
+version: '1'
+services:
+  minecraft_app:
+    build: .
+    ports:
+      - "25565:25565"
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/app/data  # Adjust volume mapping as needed
+    restart: unless-stopped
