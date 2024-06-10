@@ -151,27 +151,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# Minecraft Specfic Files
-banned-ips.json
-banned-players.json
-bukkit.yml
-bundler
-commands.yml
-crash-reports
-eula.txt
-help.yml
-logs
-ops.json
-permissions.yml
-plugins
-server.properties
-spigot.yml
-usercache.json
-whitelist.json
-world
-world_nether
-world_the_end
-crash-reports
-crash-reports
-spigot.jar

@@ -9,7 +9,7 @@ load_dotenv()
 
 config = {
     "token": os.getenv("token"),
-    "start_server": f"java -Xms4G -Xmx4G -XX:+UseG1GC -jar {os.getenv('mc_jar')} nogui",
+    "start_server": f"cd server && java -Xms4G -Xmx4G -XX:+UseG1GC -jar {os.getenv('mc_jar')} nogui",
 }
 
 intents = discord.Intents.default()

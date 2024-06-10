@@ -1,0 +1,3 @@
+# Ignore all server related files
+*
+!.gitignore
