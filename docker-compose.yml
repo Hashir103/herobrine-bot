@@ -1,6 +1,6 @@
-version: '1'
+version: '1.0.0'
 services:
-  minecraft_app:
+  bot:
     build: .
     ports:
       - "25565:25565"

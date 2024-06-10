@@ -1,6 +1,7 @@
 import os
 import discord
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 from dotenv import load_dotenv
 from asyncio import subprocess
 
@@ -8,7 +9,7 @@ load_dotenv()
 
 config = {
     "token": os.getenv("token"),
-    "start_server": f"java -Xms4G -Xmx4G -XX:+UseG1GC -jar spigot.jar nogui"
+    "start_server": f"java -Xms4G -Xmx4G -XX:+UseG1GC -jar {os.getenv('mc_jar')} nogui",
 }
 
 intents = discord.Intents.default()
@@ -26,10 +27,6 @@ async def send_input(text):
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-
-    # Send message to channel
-    channel = bot.get_channel(1166414794639822918)
-    await channel.send("Awake!")
 
 @bot.command()
 async def ping(ctx):
@@ -67,6 +64,19 @@ async def stop(ctx):
         serv_proc = None
         
         await ctx.send("Server stopped!")
+    else:
+        await ctx.send("Server is not running!")
+
+@bot.command()
+@has_permissions(administrator=True)
+async def console(ctx, *, text):
+    global serv_proc
+    if serv_proc is not None:
+        if text == "stop":
+            await ctx.send("Please use the !stop command to stop the server!")
+            return
+        await send_input(text)
+        await ctx.send("Command sent!")
     else:
         await ctx.send("Server is not running!")
 
