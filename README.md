@@ -26,7 +26,7 @@ Please put all your server files and your server.jar in the `./server` directory
 Run `main.py`.
 
 ## Running on Windows Based Systems
-**RUNNING main.py directly in Windows will break any command related to the console, including stop.**\ 
+**RUNNING main.py directly in Windows will break any command related to the console, including stop**.\
 To circumvent this, We will use Docker to create a WSL environment that will let us run the project to its full extent. Run `start.bat` to set up the Docker Environment. Note that if you make any changes to the bot files, it will need time to regenerate the whole Docker volume. Make sure to delete old images. 
 
 ## Bot Commands
