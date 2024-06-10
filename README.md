@@ -26,13 +26,13 @@ Please put all your server files and your server.jar in the `./server` directory
 Run `main.py`.
 
 ## Running on Windows Based Systems
-**RUNNING main.py directly in Windows will break any command related to the console, including stop.** 
+**RUNNING main.py directly in Windows will break any command related to the console, including stop.**\ 
 To circumvent this, We will use Docker to create a WSL environment that will let us run the project to its full extent. Run `start.bat` to set up the Docker Environment. Note that if you make any changes to the bot files, it will need time to regenerate the whole Docker volume. Make sure to delete old images. 
 
 ## Bot Commands
-`!ping` - Check's bot's responsiveness
-`!start` - Starts the minecraft server.
-`!stop` - Stops a running minecraft server.
-`!status` - Checks whether a minecraft server is running or not.
-`!console args` - Admin only command: Let's you type in the console (used for operating players, for example)
+`!ping` - Check's bot's responsiveness\
+`!start` - Starts the minecraft server.\
+`!stop` - Stops a running minecraft server.\
+`!status` - Checks whether a minecraft server is running or not.\
+`!console args` - Admin only command: Let's you type in the console (used for operating players, for example)\
   -> example: `!console say hi` or `!op hash1r`
