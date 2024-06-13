@@ -12,7 +12,7 @@ COPY . /app
 
 # Update and install necessary packages
 RUN apt-get update && \
-    apt-get install -y python3.9 python3-pip openjdk-17-jdk && \
+    apt-get install -y python3.9 python3-pip openjdk-21-jdk && \
     apt-get clean
 
 # Set Python 3.9 as the default python interpreter
